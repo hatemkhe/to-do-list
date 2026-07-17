@@ -985,6 +985,30 @@
     .btn-profile:hover svg {
       transform: translateX(3px);
     }
+
+    /* Mobile scrollability and viewport adjustments */
+    @media (max-width: 768px) {
+      html {
+        height: auto !important;
+      }
+      body {
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch;
+      }
+      main.main-content {
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: visible !important;
+        overflow-x: hidden !important;
+      }
+      .tasks-grid {
+        overflow-y: visible !important;
+        flex-grow: 0 !important;
+      }
+    }
   </style>
 </head>
 <body>
