@@ -986,6 +986,10 @@
       transform: translateX(3px);
     }
 
+    .mobile-only-footer {
+      display: none;
+    }
+
     /* Mobile scrollability and viewport adjustments */
     @media (max-width: 768px) {
       html {
@@ -1007,6 +1011,21 @@
       .tasks-grid {
         overflow-y: visible !important;
         flex-grow: 0 !important;
+      }
+      .mobile-only-footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1rem 1.5rem 1rem;
+        border-top: 1px solid var(--glass-border);
+        margin-top: 2.5rem;
+        gap: 0.75rem;
+        width: 100%;
+      }
+      .mobile-only-footer .btn-profile {
+        margin-bottom: 0;
+        max-width: 320px;
       }
     }
   </style>
@@ -1153,30 +1172,56 @@
       </form>
     </section>
 
-    <!-- Filters, Search and Tab Rows -->
-    <section class="filters-row">
+    <!-- Beautiful Dedicated Tasks Panel Space -->
+    <section class="glass tasks-container-panel" style="padding: 1.5rem; border-radius: 16px; margin-top: 1rem; display: flex; flex-direction: column; gap: 1.25rem;">
       
-      <!-- Filter buttons deck -->
-      <div class="tabs-deck">
-        <button class="tab-trigger active" onclick="switchFilterTab('active')" id="tab-f-active">Active</button>
-        <button class="tab-trigger" onclick="switchFilterTab('completed')" id="tab-f-completed">Completed</button>
-        <button class="tab-trigger" onclick="switchFilterTab('overdue')" id="tab-f-overdue">Overdue</button>
-        <button class="tab-trigger" onclick="switchFilterTab('all')" id="tab-f-all">All Tasks</button>
+      <!-- Panel Header with Arabic & English labels and a neon status dot -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="width: 8px; height: 8px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent);"></div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--subtle-text); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+            <span>Tasks Space</span>
+            <span style="color: var(--text-dim); font-weight: 400; font-size: 0.8rem;">/ مساحة المهام المضافة</span>
+          </h3>
+        </div>
+        <div id="tasks-count-badge" class="meta-badge" style="background: var(--system-indicator-bg); color: var(--system-indicator-text); font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; border: 1px solid var(--system-indicator-border);">0 TASKS</div>
       </div>
 
-      <!-- Quick test rig presets for instant verification -->
-      <div class="simulation-toolbox">
-        <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim);">Test rig:</span>
-        <button class="btn-sim" onclick="deployTestTask(10)">⚡ 10s</button>
-        <button class="btn-sim" onclick="deployTestTask(60)">⚡ 1m</button>
+      <!-- Filters, Search and Tab Rows -->
+      <div class="filters-row" style="margin-bottom: 0;">
+        
+        <!-- Filter buttons deck -->
+        <div class="tabs-deck">
+          <button class="tab-trigger active" onclick="switchFilterTab('active')" id="tab-f-active">Active</button>
+          <button class="tab-trigger" onclick="switchFilterTab('completed')" id="tab-f-completed">Completed</button>
+          <button class="tab-trigger" onclick="switchFilterTab('overdue')" id="tab-f-overdue">Overdue</button>
+          <button class="tab-trigger" onclick="switchFilterTab('all')" id="tab-f-all">All Tasks</button>
+        </div>
+
+        <!-- Quick test rig presets for instant verification -->
+        <div class="simulation-toolbox">
+          <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim);">Test rig:</span>
+          <button class="btn-sim" onclick="deployTestTask(10)">⚡ 10s</button>
+          <button class="btn-sim" onclick="deployTestTask(60)">⚡ 1m</button>
+        </div>
+
       </div>
 
+      <!-- Core Dynamic Task Grid Container -->
+      <div class="tasks-grid" id="master-tasks-grid">
+        <!-- Loaded Dynamically via JS -->
+      </div>
+      
     </section>
 
-    <!-- Core Dynamic Task Grid Container -->
-    <section class="tasks-grid" id="master-tasks-grid">
-      <!-- Loaded Dynamically via JS -->
-    </section>
+    <!-- Mobile Creator Footer (only visible on mobile) -->
+    <footer class="mobile-only-footer">
+      <a href="https://bejewelled-faun-86ec74.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-profile" id="creator-link-mobile">
+        <span>Khemamssa Hatem</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #475569; text-transform: uppercase;">Build v4.2.0-stable</div>
+    </footer>
 
   </main>
 
@@ -1643,6 +1688,12 @@
       const sbUrgent = document.getElementById('sb-stat-urgent');
       if (sbActive) sbActive.textContent = activeTasks;
       if (sbUrgent) sbUrgent.textContent = urgentTasks;
+
+      // Update tasks count badge in the dedicated space
+      const taskCountBadge = document.getElementById('tasks-count-badge');
+      if (taskCountBadge) {
+        taskCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'TASK' : 'TASKS'}`;
+      }
 
       if (filtered.length === 0) {
         grid.innerHTML = `
