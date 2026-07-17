@@ -1,0 +1,6 @@
+{
+  "name": "To-Do List",
+  "description": "An advanced, modern, dark-themed To-Do List application with system notifications, countdown timers, repeat schedules, custom priority levels, and dynamic colors.",
+  "requestFramePermissions": ["notifications"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

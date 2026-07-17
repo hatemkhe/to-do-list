@@ -1,0 +1,1983 @@
+<!doctype html>
+<html lang="en" style="height: 100%; margin: 0;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova Task Engine - Sleek Command Center</title>
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Color Palette variables matching Sleek Interface design theme */
+    :root {
+      --bg: #020617;
+      --surface: #0f172a;
+      --surface-lighter: #1e293b;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.2);
+      --high: #ef4444;
+      --high-glow: rgba(239, 68, 68, 0.15);
+      --medium: #f59e0b;
+      --medium-glow: rgba(245, 158, 11, 0.15);
+      --low: #10b981;
+      --low-glow: rgba(16, 185, 129, 0.15);
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+
+      /* Adaptive panel & border styles */
+      --glass-bg: rgba(30, 41, 59, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.05);
+      --sidebar-bg: rgba(15, 23, 42, 0.5);
+      --sidebar-border: rgba(255, 255, 255, 0.05);
+      --stat-card-bg: rgba(30, 41, 59, 0.4);
+      --stat-card-border: rgba(255, 255, 255, 0.03);
+      --env-border: rgba(255, 255, 255, 0.03);
+      --input-bg: rgba(15, 23, 42, 0.6);
+      --input-border: rgba(255, 255, 255, 0.08);
+      --tab-deck-bg: rgba(15, 23, 42, 0.6);
+      --tab-deck-border: rgba(255, 255, 255, 0.05);
+      --card-hover-bg: rgba(30, 41, 59, 0.85);
+      --checkbox-bg: rgba(15, 23, 42, 0.8);
+      --checkbox-border: rgba(255, 255, 255, 0.12);
+      --subtle-text: #ffffff;
+      --system-indicator-bg: rgba(99, 102, 241, 0.08);
+      --system-indicator-border: rgba(99, 102, 241, 0.15);
+      --system-indicator-text: #c7d2fe;
+      --meta-badge-bg: rgba(15, 23, 42, 0.4);
+      --clock-bg: rgba(30, 41, 59, 0.4);
+      --clock-border: rgba(255, 255, 255, 0.05);
+      --shadow-intensity: rgba(0, 0, 0, 0.4);
+    }
+
+    :root.light {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-lighter: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.15);
+      --high: #dc2626;
+      --high-glow: rgba(220, 38, 38, 0.1);
+      --medium: #d97706;
+      --medium-glow: rgba(217, 119, 6, 0.1);
+      --low: #059669;
+      --low-glow: rgba(5, 150, 105, 0.1);
+      --text-main: #0f172a;
+      --text-dim: #5c6f84;
+
+      --glass-bg: rgba(255, 255, 255, 0.8);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --sidebar-bg: rgba(241, 245, 249, 0.8);
+      --sidebar-border: rgba(0, 0, 0, 0.08);
+      --stat-card-bg: rgba(255, 255, 255, 0.9);
+      --stat-card-border: rgba(0, 0, 0, 0.05);
+      --env-border: rgba(0, 0, 0, 0.05);
+      --input-bg: rgba(255, 255, 255, 0.95);
+      --input-border: rgba(0, 0, 0, 0.12);
+      --tab-deck-bg: rgba(241, 245, 249, 0.9);
+      --tab-deck-border: rgba(0, 0, 0, 0.06);
+      --card-hover-bg: rgba(241, 245, 249, 0.95);
+      --checkbox-bg: rgba(255, 255, 255, 0.9);
+      --checkbox-border: rgba(0, 0, 0, 0.15);
+      --subtle-text: #0f172a;
+      --system-indicator-bg: rgba(79, 70, 229, 0.06);
+      --system-indicator-border: rgba(79, 70, 229, 0.12);
+      --system-indicator-text: #4f46e5;
+      --meta-badge-bg: rgba(0, 0, 0, 0.04);
+      --clock-bg: rgba(255, 255, 255, 0.9);
+      --clock-border: rgba(0, 0, 0, 0.06);
+      --shadow-intensity: rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* Glass Panels */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 4px 20px var(--shadow-intensity);
+    }
+
+    .glow-indigo {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Left Sidebar */
+    aside.sidebar {
+      width: 280px;
+      border-right: 1px solid var(--sidebar-border);
+      background-color: var(--sidebar-bg);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      aside.sidebar {
+        display: none; /* Auto-collapse on smaller layout dimensions */
+      }
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .logo-container h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .system-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--system-indicator-bg);
+      border-radius: 12px;
+      border: 1px solid var(--system-indicator-border);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--accent); }
+    }
+
+    .system-status-indicator span {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--system-indicator-text);
+    }
+
+    /* Sidebar Navigation / Quick Stats */
+    .section-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+      padding-left: 0.25rem;
+    }
+
+    .sidebar-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .sidebar-stat-card {
+      background: var(--stat-card-bg);
+      border: 1px solid var(--stat-card-border);
+      padding: 0.85rem;
+      border-radius: 10px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .sidebar-stat-card:hover {
+      background: var(--card-hover-bg);
+      border-color: var(--glass-border);
+    }
+
+    .sidebar-stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--subtle-text);
+    }
+
+    .sidebar-stat-lbl {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-top: 0.15rem;
+    }
+
+    /* Environment Configs */
+    .env-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .env-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      padding: 0.5rem 0.25rem;
+      border-bottom: 1px solid var(--env-border);
+    }
+
+    .env-row span:last-child {
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-active { color: var(--accent); }
+    .status-inactive { color: var(--text-dim); }
+    .status-ok { color: var(--low); }
+
+    /* Custom Notification Request Badge Button */
+    .notif-perm-btn {
+      width: 100%;
+      background: var(--stat-card-bg);
+      border: 1px solid var(--stat-card-border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.6rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+    .notif-perm-btn:hover {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Main Container layout */
+    main.main-content {
+      flex: 1 1 0%;
+      display: flex;
+      flex-direction: column;
+      padding: 2.25rem;
+      overflow-y: auto;
+      height: 100%;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      main.main-content {
+        padding: 1.25rem;
+      }
+    }
+
+    /* Header */
+    header.dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    header.dashboard-header h2 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 300;
+      color: var(--subtle-text);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    header.dashboard-header p {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .clock-hub {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .digital-clock-panel {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      background: var(--clock-bg);
+      border: 1px solid var(--clock-border);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle-btn {
+      background: var(--clock-bg);
+      border: 1px solid var(--clock-border);
+      color: var(--accent);
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .theme-toggle-btn:hover {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 0 12px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+    .theme-toggle-btn svg {
+      transition: transform 0.3s ease;
+    }
+    .theme-toggle-btn:active svg {
+      transform: rotate(30deg);
+    }
+
+    .sync-status-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--low);
+    }
+
+    /* Deployment configuration deck (the form) */
+    .deploy-panel {
+      padding: 1.25rem;
+      border-radius: 16px;
+      margin-bottom: 1.75rem;
+    }
+
+    .deploy-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .deploy-form {
+        grid-template-columns: 2fr 1.25fr 1fr 1fr auto;
+      }
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .form-control {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      width: 100%;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* Special custom priority selectors mimicking native options */
+    select.form-control {
+      appearance: none;
+      cursor: pointer;
+      padding-right: 2.25rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+    }
+
+    .btn-deploy {
+      background: var(--accent);
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem 1.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .btn-deploy:hover {
+      background: #5046e5;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Filters and Options Row */
+    .filters-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tabs-deck {
+      display: flex;
+      background: var(--tab-deck-bg);
+      border: 1px solid var(--tab-deck-border);
+      padding: 0.25rem;
+      border-radius: 10px;
+      gap: 0.15rem;
+    }
+
+    .tab-trigger {
+      background: none;
+      border: none;
+      padding: 0.45rem 1rem;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      border-radius: 7px;
+      transition: all 0.15s;
+    }
+    .tab-trigger:hover {
+      color: var(--text-main);
+    }
+    .tab-trigger.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    /* Test simulation buttons */
+    .simulation-toolbox {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn-sim {
+      background: var(--stat-card-bg);
+      border: 1px solid var(--stat-card-border);
+      color: var(--text-dim);
+      padding: 0.4rem 0.85rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-sim:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Task List Grid */
+    .tasks-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      overflow-y: auto;
+      flex-grow: 1;
+      padding-right: 0.25rem;
+    }
+
+    /* Task Card Item with Priority Borders */
+    .task-card {
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .task-card:hover {
+      transform: translateX(3px);
+      background: var(--card-hover-bg);
+    }
+
+    .priority-high { border-left: 4px solid var(--high); }
+    .priority-medium { border-left: 4px solid var(--medium); }
+    .priority-low { border-left: 4px solid var(--low); }
+
+    .task-card.completed {
+      opacity: 0.5;
+    }
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+      color: var(--text-dim);
+    }
+
+    /* Task left deck elements */
+    .task-left-deck {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    /* Custom Styled Checkbox */
+    .custom-checkbox-container {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .custom-checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .checkbox-box {
+      width: 22px;
+      height: 22px;
+      background: var(--checkbox-bg);
+      border: 1.5px solid var(--checkbox-border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .custom-checkbox-container:hover input ~ .checkbox-box {
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .custom-checkbox-container input:checked ~ .checkbox-box {
+      background-color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .checkbox-box svg {
+      width: 14px;
+      height: 14px;
+      stroke: #ffffff;
+      stroke-width: 3.5px;
+      display: none;
+    }
+
+    .custom-checkbox-container input:checked ~ .checkbox-box svg {
+      display: block;
+    }
+
+    /* Task details alignment */
+    .task-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
+    }
+
+    .priority-high .task-prio-lbl { color: var(--high); }
+    .priority-medium .task-prio-lbl { color: var(--medium); }
+    .priority-low .task-prio-lbl { color: var(--low); }
+
+    .task-prio-lbl {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .task-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--subtle-text);
+      word-break: break-word;
+      line-height: 1.35;
+    }
+
+    .task-meta-tags {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .meta-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: var(--meta-badge-bg);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .meta-badge.recurring {
+      color: #c7d2fe;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+    }
+
+    /* Task right deck with countdown timer */
+    .task-right-deck {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .countdown-timer-box {
+      text-align: right;
+    }
+
+    .countdown-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .countdown-val.status-high { color: var(--high); text-shadow: 0 0 10px rgba(239, 68, 68, 0.25); }
+    .countdown-val.status-medium { color: var(--medium); text-shadow: 0 0 10px rgba(245, 158, 11, 0.25); }
+    .countdown-val.status-normal { color: var(--accent); text-shadow: 0 0 10px rgba(99, 102, 241, 0.25); }
+    .countdown-val.status-finished { color: var(--text-dim); }
+
+    .countdown-lbl {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Delete Button */
+    .btn-delete-task {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-delete-task:hover {
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--high);
+    }
+
+    /* Empty state */
+    .empty-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+      text-align: center;
+      border: 1.5px dashed var(--glass-border);
+      border-radius: 16px;
+      background: var(--stat-card-bg);
+    }
+
+    .empty-placeholder svg {
+      width: 48px;
+      height: 48px;
+      stroke: var(--text-dim);
+      opacity: 0.35;
+      margin-bottom: 1rem;
+    }
+
+    .empty-placeholder h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .empty-placeholder p {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      max-width: 320px;
+    }
+
+    /* Full-Screen Siren/Alarm Modal System */
+    .alarm-screen-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(2, 6, 23, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .alarm-viewport {
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(99, 102, 241, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      animation: zoom-pulse 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .alarm-viewport.high-siren {
+      border-color: var(--high);
+      box-shadow: 0 0 60px rgba(239, 68, 68, 0.5);
+    }
+
+    @keyframes zoom-pulse {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Rotating / Pulsing Siren light icon container */
+    .siren-beacon-container {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.08);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      animation: rotate-beacon 1.5s ease-in-out infinite alternate;
+    }
+
+    .high-siren .siren-beacon-container {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: var(--high);
+      color: var(--high);
+    }
+
+    @keyframes rotate-beacon {
+      0% { transform: scale(1); box-shadow: 0 0 10px rgba(99, 102, 241, 0.1); }
+      100% { transform: scale(1.1); box-shadow: 0 0 35px rgba(99, 102, 241, 0.5); }
+    }
+
+    .high-siren .siren-beacon-container {
+      animation: rotate-beacon-high 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes rotate-beacon-high {
+      0% { transform: scale(1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.1); }
+      100% { transform: scale(1.1); box-shadow: 0 0 45px rgba(239, 68, 68, 0.6); }
+    }
+
+    .alarm-title-h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      font-size: 1.35rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .alarm-task-caption {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--subtle-text);
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      padding: 1.25rem;
+      border-radius: 12px;
+      width: 100%;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    .alarm-badges-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .alarm-btn-controls {
+      display: flex;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .alarm-btn {
+      flex: 1;
+      padding: 0.85rem;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-alarm-dismiss {
+      background: var(--low);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    }
+    .btn-alarm-dismiss:hover {
+      background: #059669;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-alarm-snooze {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+    .btn-alarm-snooze:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Toast System Panel */
+    .toast-panel-feed {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 1100;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      pointer-events: auto;
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 8px 30px var(--shadow-intensity);
+      animation: fly-toast-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 360px;
+    }
+
+    @keyframes fly-toast-in {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast-item.success { border-color: var(--low); }
+    .toast-item.info { border-color: var(--accent); }
+
+    .toast-icon {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+    }
+    .toast-icon.success-icon { color: var(--low); }
+    .toast-icon.info-icon { color: var(--accent); }
+
+    .toast-body-text {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    /* Standard Scrollbar optimization */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--surface-lighter);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    /* Professional profile link button styled for Cosmic Slate theme */
+    .btn-profile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.04));
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 10px;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.7rem 1rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .btn-profile:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 18px rgba(99, 102, 241, 0.4);
+      transform: translateY(-2px);
+    }
+    .btn-profile svg {
+      transition: transform 0.3s ease;
+      color: #ffffff;
+    }
+    .btn-profile:hover svg {
+      transform: translateX(3px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Component -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <!-- Title branding logo area -->
+      <div class="logo-container">
+        <h1>NOVA ENGINE</h1>
+        
+        <div class="system-status-indicator">
+          <div class="status-dot"></div>
+          <span>System Online</span>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Analytics deck -->
+      <div class="sidebar-metrics">
+        <h4 class="section-lbl">Analytics Hub</h4>
+        <div class="sidebar-stats-grid">
+          <div class="sidebar-stat-card">
+            <div class="sidebar-stat-val" id="sb-stat-active">0</div>
+            <div class="sidebar-stat-lbl">Active</div>
+          </div>
+          <div class="sidebar-stat-card">
+            <div class="sidebar-stat-val" id="sb-stat-urgent" style="color: var(--high);">0</div>
+            <div class="sidebar-stat-lbl">Urgent</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Environment section details -->
+      <div class="sidebar-env">
+        <h4 class="section-lbl">Environment</h4>
+        <div class="env-controls">
+          <div class="env-row">
+            <span>Notifications</span>
+            <span id="sb-env-notif-lbl" class="status-inactive">Inactive</span>
+          </div>
+          <div class="env-row">
+            <span>Audio Sentry</span>
+            <span id="sb-env-audio-lbl" class="status-ok">ACTIVE</span>
+          </div>
+          
+          <!-- Quick Manual permissions initializer -->
+          <div style="margin-top: 0.5rem;" id="perm-request-container">
+            <button class="notif-perm-btn" onclick="requestNotificationAccess()">Authorize Alerts</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar footer -->
+    <div class="sidebar-bottom">
+      <a href="https://bejewelled-faun-86ec74.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-profile" id="creator-link">
+        <span>Khemamssa Hatem</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #475569; uppercase">Build v4.2.0-stable</div>
+    </div>
+  </aside>
+
+  <!-- Command Center area -->
+  <main class="main-content">
+    
+    <!-- Top Row Header alignment -->
+    <header class="dashboard-header">
+      <div>
+        <h2>Command Center</h2>
+        <p>Strategic task scheduling & automated notifications.</p>
+      </div>
+
+      <div class="clock-hub">
+        <!-- Live ticking digital clock -->
+        <div class="digital-clock-panel">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="live-time-display">0000-00-00 00:00:00</span>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
+          <!-- Sun Icon (shown in dark mode to switch to light mode) -->
+          <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon Icon (shown in light mode to switch to dark mode) -->
+          <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <div class="sync-status-badge">
+          Local Persistence: SYNCED
+        </div>
+      </div>
+    </header>
+
+    <!-- Deploy config deck form -->
+    <section class="glass deploy-panel">
+      <form class="deploy-form" id="deploy-task-form" onsubmit="handleTaskDeploy(event)">
+        
+        <!-- Core Description -->
+        <div class="input-wrapper">
+          <input type="text" id="deploy-task-title" class="form-control" placeholder="Enter task signature (objective)..." required />
+        </div>
+
+        <!-- Date & Coordinate -->
+        <div class="input-wrapper">
+          <input type="datetime-local" id="deploy-task-time" class="form-control" required />
+        </div>
+
+        <!-- Priority Select -->
+        <div class="input-wrapper">
+          <select id="deploy-task-priority" class="form-control" required>
+            <option value="high">High Priority</option>
+            <option value="medium" selected>Medium Priority</option>
+            <option value="low">Low Priority</option>
+          </select>
+        </div>
+
+        <!-- Repeating scheduler toggle -->
+        <div class="input-wrapper">
+          <select id="deploy-task-repeat" class="form-control" required>
+            <option value="once">Once</option>
+            <option value="hourly">Hourly</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+          </select>
+        </div>
+
+        <!-- Submission Deploy trigger -->
+        <button type="submit" class="btn-deploy">DEPLOY TASK</button>
+      </form>
+    </section>
+
+    <!-- Filters, Search and Tab Rows -->
+    <section class="filters-row">
+      
+      <!-- Filter buttons deck -->
+      <div class="tabs-deck">
+        <button class="tab-trigger active" onclick="switchFilterTab('active')" id="tab-f-active">Active</button>
+        <button class="tab-trigger" onclick="switchFilterTab('completed')" id="tab-f-completed">Completed</button>
+        <button class="tab-trigger" onclick="switchFilterTab('overdue')" id="tab-f-overdue">Overdue</button>
+        <button class="tab-trigger" onclick="switchFilterTab('all')" id="tab-f-all">All Tasks</button>
+      </div>
+
+      <!-- Quick test rig presets for instant verification -->
+      <div class="simulation-toolbox">
+        <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim);">Test rig:</span>
+        <button class="btn-sim" onclick="deployTestTask(10)">⚡ 10s</button>
+        <button class="btn-sim" onclick="deployTestTask(60)">⚡ 1m</button>
+      </div>
+
+    </section>
+
+    <!-- Core Dynamic Task Grid Container -->
+    <section class="tasks-grid" id="master-tasks-grid">
+      <!-- Loaded Dynamically via JS -->
+    </section>
+
+  </main>
+
+  <!-- Siren System Alert Overlay Modal -->
+  <div class="alarm-screen-overlay" id="global-alarm-screen">
+    <div class="alarm-viewport" id="alarm-box-element">
+      
+      <!-- Pulsing rotating light icon -->
+      <div class="siren-beacon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M14 2H10"/><path d="M4 10a8 8 0 0 1 16 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>
+      </div>
+
+      <div>
+        <h3 class="alarm-title-h3" id="alarm-prio-title">Urgent Sentry Trigger</h3>
+        <p style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.1em; margin-top: 0.25rem;">Trigger coordinates reached</p>
+      </div>
+
+      <!-- Active Trigger Objective description -->
+      <div class="alarm-task-caption" id="alarm-task-message">
+        Perform designated target execution step.
+      </div>
+
+      <!-- Badges information -->
+      <div class="alarm-badges-row">
+        <span class="meta-badge recurring" id="alarm-repeat-badge">Cycle: Once</span>
+      </div>
+
+      <!-- Siren Action buttons dismiss / snooze -->
+      <div class="alarm-btn-controls">
+        <button class="alarm-btn btn-alarm-snooze" onclick="snoozeSystemAlarm()">Snooze (5m)</button>
+        <button class="alarm-btn btn-alarm-dismiss" onclick="dismissSystemAlarm()">Mark Complete</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Feed notifications anchor -->
+  <div class="toast-panel-feed" id="toast-deck"></div>
+
+  <!-- Javascript Core Sentry Schedulers -->
+  <script>
+    // State arrays
+    let tasks = JSON.parse(localStorage.getItem('nova_tasks')) || [];
+    let currentFilter = 'active'; // active, completed, overdue, all
+    let activeAlarm = null;       // stores task object currently alerting
+    let audioLoopId = null;       // Web Audio interval trigger
+
+    // Custom Web Audio Synth
+    const synth = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      play(priority) {
+        this.init();
+        const now = this.ctx.currentTime;
+        
+        if (priority === 'high') {
+          // Double frequency siren sweep
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const gainNode = this.ctx.createGain();
+
+          osc1.type = 'sawtooth';
+          osc2.type = 'sine';
+
+          osc1.frequency.setValueAtTime(600, now);
+          osc1.frequency.linearRampToValueAtTime(1000, now + 0.2);
+          osc1.frequency.linearRampToValueAtTime(600, now + 0.4);
+
+          osc2.frequency.setValueAtTime(500, now);
+          osc2.frequency.linearRampToValueAtTime(800, now + 0.2);
+          osc2.frequency.linearRampToValueAtTime(500, now + 0.4);
+
+          gainNode.gain.setValueAtTime(0.2, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+          osc1.connect(gainNode);
+          osc2.connect(gainNode);
+          gainNode.connect(this.ctx.destination);
+
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.45);
+          osc2.stop(now + 0.45);
+
+        } else if (priority === 'medium') {
+          // Melodic technological chime
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const gainNode = this.ctx.createGain();
+
+          osc1.type = 'triangle';
+          osc1.frequency.setValueAtTime(587.33, now); // D5
+          osc1.frequency.exponentialRampToValueAtTime(880.00, now + 0.25); // A5
+
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(440.00, now); // A4
+          osc2.frequency.exponentialRampToValueAtTime(587.33, now + 0.25);
+
+          gainNode.gain.setValueAtTime(0.18, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+          osc1.connect(gainNode);
+          osc2.connect(gainNode);
+          gainNode.connect(this.ctx.destination);
+
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.35);
+          osc2.stop(now + 0.35);
+
+        } else {
+          // Low priority quiet sci-fi pulse beep
+          const osc = this.ctx.createOscillator();
+          const gainNode = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(900.00, now);
+          osc.frequency.exponentialRampToValueAtTime(1400.00, now + 0.12);
+
+          gainNode.gain.setValueAtTime(0.12, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+          osc.connect(gainNode);
+          gainNode.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      }
+    };
+
+    // Unlock Web Audio Context upon any general interaction gesture
+    document.addEventListener('click', () => { synth.init(); }, { once: false });
+    document.addEventListener('keydown', () => { synth.init(); }, { once: false });
+
+    // Toast manager
+    function makeToast(message, type = 'success') {
+      const deck = document.getElementById('toast-deck');
+      if (!deck) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast-item ${type}`;
+
+      let iconSvg = '';
+      if (type === 'success') {
+        iconSvg = `<svg class="toast-icon success-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>`;
+      } else {
+        iconSvg = `<svg class="toast-icon info-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+      }
+
+      toast.innerHTML = `
+        ${iconSvg}
+        <span class="toast-body-text">${message}</span>
+      `;
+
+      deck.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'fly-toast-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) reverse';
+        setTimeout(() => toast.remove(), 280);
+      }, 4000);
+    }
+
+    // Live clock ticks
+    function runLiveClock() {
+      const clockLabel = document.getElementById('live-time-display');
+      setInterval(() => {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        if (clockLabel) {
+          clockLabel.textContent = `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+        }
+      }, 1000);
+    }
+
+    // Render permission status in sidebar env list
+    function renderNotifPermIndicators() {
+      const label = document.getElementById('sb-env-notif-lbl');
+      const container = document.getElementById('perm-request-container');
+      
+      if (!("Notification" in window)) {
+        if (label) {
+          label.textContent = "UNSUPPORTED";
+          label.className = "status-inactive";
+        }
+        if (container) container.style.display = 'none';
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        if (label) {
+          label.textContent = "ACTIVE";
+          label.className = "status-ok";
+        }
+        if (container) container.style.display = 'none';
+      } else if (Notification.permission === 'denied') {
+        if (label) {
+          label.textContent = "BLOCKED";
+          label.className = "status-inactive";
+        }
+        if (container) container.style.display = 'none';
+      } else {
+        if (label) {
+          label.textContent = "PENDING";
+          label.className = "status-inactive";
+        }
+        if (container) container.style.display = 'block';
+      }
+    }
+
+    // Trigger explicit Web Notification Permission prompt
+    async function requestNotificationAccess() {
+      if (!("Notification" in window)) {
+        makeToast('Native system notifications unsupported in this browser.', 'info');
+        return;
+      }
+      try {
+        const result = await Notification.requestPermission();
+        renderNotifPermIndicators();
+        if (result === 'granted') {
+          makeToast('Desktop alerts authorized. Sentry active.', 'success');
+        } else {
+          makeToast('Alert clearance denied.', 'info');
+        }
+      } catch (e) {
+        console.error(e);
+        makeToast('Permission request exception.', 'info');
+      }
+    }
+
+    // Pre-populate deploy time with 15 mins offset
+    function preFillDeployTime() {
+      const el = document.getElementById('deploy-task-time');
+      if (el) {
+        const offsetDate = new Date(Date.now() + 15 * 60000);
+        const y = offsetDate.getFullYear();
+        const m = String(offsetDate.getMonth() + 1).padStart(2, '0');
+        const d = String(offsetDate.getDate()).padStart(2, '0');
+        const hh = String(offsetDate.getHours()).padStart(2, '0');
+        const mm = String(offsetDate.getMinutes()).padStart(2, '0');
+        el.value = `${y}-${m}-${d}T${hh}:${mm}`;
+      }
+    }
+
+    // Save tasks to Local Storage
+    function saveTasks() {
+      localStorage.setItem('nova_tasks', JSON.stringify(tasks));
+    }
+
+    // Submitting deployment form
+    function handleTaskDeploy(event) {
+      event.preventDefault();
+
+      const titleInput = document.getElementById('deploy-task-title');
+      const timeInput = document.getElementById('deploy-task-time');
+      const priorityInput = document.getElementById('deploy-task-priority');
+      const repeatInput = document.getElementById('deploy-task-repeat');
+
+      if (!titleInput || !timeInput || !priorityInput || !repeatInput) return;
+
+      const title = titleInput.value.trim();
+      const timeVal = timeInput.value;
+      const priority = priorityInput.value;
+      const repeat = repeatInput.value;
+
+      if (!title || !timeVal) return;
+
+      const scheduledMs = new Date(timeVal).getTime();
+      if (isNaN(scheduledMs)) {
+        makeToast('Invalid time coordinate sequence.', 'info');
+        return;
+      }
+
+      const newTask = {
+        id: 'nova_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        title,
+        time: new Date(timeVal).toISOString(),
+        priority,
+        repeat,
+        completed: false,
+        created: new Date().toISOString(),
+        notified: false
+      };
+
+      tasks.push(newTask);
+      saveTasks();
+
+      // Clear input and reload
+      titleInput.value = '';
+      preFillDeployTime();
+
+      makeToast('Task deployed to scheduling engine.', 'success');
+      renderDashboardGrid();
+    }
+
+    // Deployment Test task simulation preset
+    function deployTestTask(seconds) {
+      const now = new Date();
+      const targetTime = new Date(now.getTime() + seconds * 1000);
+
+      const newTask = {
+        id: 'test_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+        title: `⚡ Simulation Test [${seconds}s coordinate]`,
+        time: targetTime.toISOString(),
+        priority: 'high',
+        repeat: 'once',
+        completed: false,
+        created: now.toISOString(),
+        notified: false
+      };
+
+      tasks.push(newTask);
+      saveTasks();
+
+      makeToast(`Simulation task armed. Alert in ${seconds}s.`, 'success');
+      renderDashboardGrid();
+    }
+
+    // Toggle complete
+    function toggleComplete(id) {
+      const idx = tasks.findIndex(t => t.id === id);
+      if (idx === -1) return;
+
+      const isDone = !tasks[idx].completed;
+      tasks[idx].completed = isDone;
+
+      // If completing, silence actively ringing alarm if any
+      if (isDone && activeAlarm && activeAlarm.id === id) {
+        dismissSystemAlarm();
+      }
+
+      if (isDone) {
+        tasks[idx].notified = true;
+      } else {
+        // Reset notification state if uncompleted and scheduled in future
+        const nowMs = Date.now();
+        const schedMs = new Date(tasks[idx].time).getTime();
+        tasks[idx].notified = (schedMs < nowMs);
+      }
+
+      saveTasks();
+      makeToast(isDone ? 'Task coordinate completed.' : 'Re-queued task coordinate.', 'success');
+      renderDashboardGrid();
+    }
+
+    // Delete task
+    function destroyTask(id) {
+      if (activeAlarm && activeAlarm.id === id) {
+        dismissSystemAlarm();
+      }
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+      makeToast('Task parameter purged.', 'info');
+      renderDashboardGrid();
+    }
+
+    // Tab Navigation switching
+    function switchFilterTab(tab) {
+      currentFilter = tab;
+      
+      const triggers = ['active', 'completed', 'overdue', 'all'];
+      triggers.forEach(t => {
+        const btn = document.getElementById(`tab-f-${t}`);
+        if (btn) {
+          if (t === tab) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        }
+      });
+
+      renderDashboardGrid();
+    }
+
+    // Calculate dynamic countdown remaining string
+    function computeCountdownString(isoString, isCompleted) {
+      if (isCompleted) {
+        return { text: "00:00:00", statusClass: "status-finished" };
+      }
+
+      const now = Date.now();
+      const target = new Date(isoString).getTime();
+      const delta = target - now;
+
+      if (delta <= 0) {
+        return { text: "00:00:00", statusClass: "status-high" };
+      }
+
+      const totalSeconds = Math.floor(delta / 1000);
+      const secs = totalSeconds % 60;
+      const totalMins = Math.floor(totalSeconds / 60);
+      const mins = totalMins % 60;
+      const totalHours = Math.floor(totalMins / 60);
+      const hours = totalHours % 24;
+      const days = Math.floor(totalHours / 24);
+
+      let formatted = '';
+      if (days > 0) {
+        formatted += `${days}d `;
+      }
+      formatted += `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      let styleCls = "status-normal";
+      if (delta < 60000) {
+        // Less than 1 minute -> urgent glowing red
+        styleCls = "status-high";
+      } else if (delta < 300000) {
+        // Less than 5 minutes -> warn yellow
+        styleCls = "status-medium";
+      }
+
+      return { text: formatted, statusClass: styleCls };
+    }
+
+    // Dynamic grid building
+    function renderDashboardGrid() {
+      const grid = document.getElementById('master-tasks-grid');
+      if (!grid) return;
+
+      const nowMs = Date.now();
+      let filtered = [];
+
+      // Sorting layout pattern: Pending tasks sorted earliest first, completed ones shown at the bottom
+      const sorted = [...tasks].sort((a, b) => {
+        if (a.completed && !b.completed) return 1;
+        if (!a.completed && b.completed) return -1;
+        if (a.completed && b.completed) {
+          return new Date(b.time).getTime() - new Date(a.time).getTime();
+        }
+        return new Date(a.time).getTime() - new Date(b.time).getTime();
+      });
+
+      if (currentFilter === 'active') {
+        filtered = sorted.filter(t => !t.completed);
+      } else if (currentFilter === 'completed') {
+        filtered = sorted.filter(t => t.completed);
+      } else if (currentFilter === 'overdue') {
+        filtered = sorted.filter(t => !t.completed && new Date(t.time).getTime() < nowMs);
+      } else {
+        filtered = sorted;
+      }
+
+      // Calculate analytic counts
+      const totalTasks = tasks.length;
+      const activeTasks = tasks.filter(t => !t.completed).length;
+      const urgentTasks = tasks.filter(t => !t.completed && new Date(t.time).getTime() < nowMs).length;
+      const finishedTasks = tasks.filter(t => t.completed).length;
+
+      // Update UI elements
+      const sbActive = document.getElementById('sb-stat-active');
+      const sbUrgent = document.getElementById('sb-stat-urgent');
+      if (sbActive) sbActive.textContent = activeTasks;
+      if (sbUrgent) sbUrgent.textContent = urgentTasks;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+            <h4>No Coordinates Scheduled</h4>
+            <p>Deploy a new task above or switch your active filters to display tasks.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = '';
+
+      filtered.forEach(task => {
+        const isOverdue = !task.completed && new Date(task.time).getTime() < nowMs;
+        const card = document.createElement('div');
+        card.className = `glass task-card priority-${task.priority} ${task.completed ? 'completed' : ''}`;
+        card.id = `card_node_${task.id}`;
+
+        const countdown = computeCountdownString(task.time, task.completed);
+
+        // Readable locale scheduling coordinate label
+        const formattedDate = new Date(task.time).toLocaleString([], {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        card.innerHTML = `
+          <div class="task-left-deck">
+            
+            <!-- Checkbox -->
+            <label class="custom-checkbox-container" onclick="event.stopPropagation();">
+              <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleComplete('${task.id}')" />
+              <span class="checkbox-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+              </span>
+            </label>
+
+            <!-- Contents details -->
+            <div class="task-details">
+              <div style="display: flex; align-items: center; gap: 0.50rem; flex-wrap: wrap;">
+                <span class="task-prio-lbl">${task.priority} Priority</span>
+                ${isOverdue ? '<span class="meta-badge" style="color: var(--high); background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239,68,68,0.2);">Overdue</span>' : ''}
+              </div>
+              <h3 class="task-title">${task.title}</h3>
+              
+              <div class="task-meta-tags">
+                <span class="meta-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  ${formattedDate}
+                </span>
+
+                ${task.repeat !== 'once' ? `
+                  <span class="meta-badge recurring">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    Repeat: ${task.repeat}
+                  </span>
+                ` : ''}
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Countdown and actions deck -->
+          <div class="task-right-deck">
+            <div class="countdown-timer-box">
+              <div class="countdown-val ${countdown.statusClass}" id="timer_lbl_${task.id}">${countdown.text}</div>
+              <div class="countdown-lbl">Time to Trigger</div>
+            </div>
+
+            <!-- Delete Sentry button -->
+            <button class="btn-delete-task" onclick="destroyTask('${task.id}')" title="Purge parameter">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Core Interval Clock Engine loop running at 1Hz frequency
+    function triggerQuantumEngine() {
+      setInterval(() => {
+        const nowMs = Date.now();
+        let stateChanged = false;
+
+        tasks.forEach(task => {
+          // If task is complete, ignore alerts
+          if (task.completed) return;
+
+          const targetMs = new Date(task.time).getTime();
+          
+          // Calculate countdown text node update directly in DOM if active in grid to avoid costly re-renders
+          const timerLabel = document.getElementById(`timer_lbl_${task.id}`);
+          if (timerLabel) {
+            const countInfo = computeCountdownString(task.time, task.completed);
+            timerLabel.textContent = countInfo.text;
+            timerLabel.className = `countdown-val ${countInfo.statusClass}`;
+          }
+
+          // Alert condition matched
+          if (targetMs <= nowMs && !task.notified) {
+            task.notified = true;
+            stateChanged = true;
+
+            // Trigger alert actions
+            fireSentryAlert(task);
+          }
+        });
+
+        if (stateChanged) {
+          saveTasks();
+          renderDashboardGrid();
+        }
+      }, 1000);
+    }
+
+    // Alert Actions
+    function fireSentryAlert(task) {
+      // 1. Native desktop notification
+      if ("Notification" in window && Notification.permission === 'granted') {
+        const priorityTitle = `${task.priority.toUpperCase()} PRIORITY ALERT`;
+        const bodyText = `${task.title} \nCoordinate reached at: ${new Date(task.time).toLocaleTimeString()}`;
+        
+        try {
+          new Notification(priorityTitle, {
+            body: bodyText,
+            tag: task.id,
+            requireInteraction: true
+          });
+        } catch (err) {
+          console.warn("Direct Notification construction failed, trying fallback:", err);
+        }
+      }
+
+      // 2. Play Audio siren loop
+      triggerSirenBuzzer(task.priority);
+
+      // 3. Open full-screen modal alert system (Master Alarm)
+      displayGlobalAlarmScreen(task);
+    }
+
+    // Custom sound synthesizer trigger
+    function triggerSirenBuzzer(priority) {
+      silenceSirenBuzzer();
+      
+      // Play sound immediately
+      synth.play(priority);
+      
+      // Loop every 2 seconds
+      audioLoopId = setInterval(() => {
+        synth.play(priority);
+      }, 2000);
+    }
+
+    function silenceSirenBuzzer() {
+      if (audioLoopId) {
+        clearInterval(audioLoopId);
+        audioLoopId = null;
+      }
+    }
+
+    // Full Screen Alarm Modal Controller
+    function displayGlobalAlarmScreen(task) {
+      activeAlarm = task;
+
+      const overlay = document.getElementById('global-alarm-screen');
+      const box = document.getElementById('alarm-box-element');
+      const prioTitle = document.getElementById('alarm-prio-title');
+      const caption = document.getElementById('alarm-task-message');
+      const rBadge = document.getElementById('alarm-repeat-badge');
+
+      if (!overlay || !box || !prioTitle || !caption || !rBadge) return;
+
+      // Styling based on priority
+      prioTitle.textContent = `${task.priority} Sentry Trigger`;
+      caption.textContent = task.title;
+      rBadge.textContent = `Cycle: ${task.repeat}`;
+
+      if (task.priority === 'high') {
+        box.classList.add('high-siren');
+      } else {
+        box.classList.remove('high-siren');
+      }
+
+      overlay.style.display = 'flex';
+    }
+
+    // Close and handle repeating cycle progression immediately
+    function advanceTaskRepeatCycle(task) {
+      if (task.repeat === 'once') {
+        task.completed = true;
+      } else {
+        // Calculate next repetition interval date coordinate
+        const currentSched = new Date(task.time).getTime();
+        let stepMs = 0;
+
+        if (task.repeat === 'hourly') {
+          stepMs = 60 * 60 * 1000;
+        } else if (task.repeat === 'daily') {
+          stepMs = 24 * 60 * 60 * 1000;
+        } else if (task.repeat === 'weekly') {
+          stepMs = 7 * 24 * 60 * 60 * 1000;
+        }
+
+        // Advance to a future slot (supports catch-up checks)
+        let nextSched = currentSched + stepMs;
+        const nowMs = Date.now();
+        while (nextSched <= nowMs) {
+          nextSched += stepMs;
+        }
+
+        task.time = new Date(nextSched).toISOString();
+        task.notified = false; // Reset notification trigger flag for next occurrence
+      }
+    }
+
+    // Dismis Alarm modal (Mark complete / Advance repetition)
+    function dismissSystemAlarm() {
+      if (!activeAlarm) return;
+
+      silenceSirenBuzzer();
+
+      const idx = tasks.findIndex(t => t.id === activeAlarm.id);
+      if (idx !== -1) {
+        advanceTaskRepeatCycle(tasks[idx]);
+        saveTasks();
+        makeToast('Active alert coordinate dismissed.', 'success');
+      }
+
+      activeAlarm = null;
+      
+      const overlay = document.getElementById('global-alarm-screen');
+      if (overlay) overlay.style.display = 'none';
+
+      renderDashboardGrid();
+    }
+
+    // Snooze Alarm modal (Adds 5 minutes to scheduled coordinate)
+    function snoozeSystemAlarm() {
+      if (!activeAlarm) return;
+
+      silenceSirenBuzzer();
+
+      const idx = tasks.findIndex(t => t.id === activeAlarm.id);
+      if (idx !== -1) {
+        const snoozeTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes in future
+        tasks[idx].time = snoozeTime.toISOString();
+        tasks[idx].notified = false; // reset notification
+        saveTasks();
+        makeToast('Task alert snoozed for 5 minutes.', 'success');
+      }
+
+      activeAlarm = null;
+
+      const overlay = document.getElementById('global-alarm-screen');
+      if (overlay) overlay.style.display = 'none';
+
+      renderDashboardGrid();
+    }
+
+    // Self-healing function on page load (calculates missed schedules for recurring tasks)
+    function performMissedAlertCheck() {
+      const nowMs = Date.now();
+      let modified = false;
+
+      tasks.forEach(task => {
+        if (task.completed) return;
+
+        const schedMs = new Date(task.time).getTime();
+        if (schedMs < nowMs) {
+          if (task.repeat !== 'once') {
+            // It's repeating, advance it to future slot immediately
+            advanceTaskRepeatCycle(task);
+            modified = true;
+          } else {
+            // Missed once-off alarm: keep as overdue, but don't auto-complete.
+            // Mark notified true so it doesn't trigger immediately, but stays in overdue list.
+            if (!task.notified) {
+              task.notified = true;
+              modified = true;
+            }
+          }
+        }
+      });
+
+      if (modified) {
+        saveTasks();
+      }
+    }
+
+    // Theme Management Engine
+    function initTheme() {
+      const storedTheme = localStorage.getItem('nova_theme') || 'dark';
+      const root = document.documentElement;
+      const iconSun = document.getElementById('theme-icon-sun');
+      const iconMoon = document.getElementById('theme-icon-moon');
+      
+      if (storedTheme === 'light') {
+        root.classList.add('light');
+        if (iconSun) iconSun.style.display = 'none';
+        if (iconMoon) iconMoon.style.display = 'block';
+      } else {
+        root.classList.remove('light');
+        if (iconSun) iconSun.style.display = 'block';
+        if (iconMoon) iconMoon.style.display = 'none';
+      }
+    }
+
+    function toggleTheme() {
+      const root = document.documentElement;
+      const isCurrentlyLight = root.classList.contains('light');
+      const nextTheme = isCurrentlyLight ? 'dark' : 'light';
+      
+      localStorage.setItem('nova_theme', nextTheme);
+      
+      const iconSun = document.getElementById('theme-icon-sun');
+      const iconMoon = document.getElementById('theme-icon-moon');
+      
+      if (nextTheme === 'light') {
+        root.classList.add('light');
+        if (iconSun) iconSun.style.display = 'none';
+        if (iconMoon) iconMoon.style.display = 'block';
+        makeToast('Switched to Light Theme', 'info');
+      } else {
+        root.classList.remove('light');
+        if (iconSun) iconSun.style.display = 'block';
+        if (iconMoon) iconMoon.style.display = 'none';
+        makeToast('Switched to Dark Theme', 'info');
+      }
+    }
+
+    // Initialization trigger
+    window.addEventListener('load', () => {
+      initTheme();
+      initClock();
+      runLiveClock();
+      preFillDeployTime();
+      renderNotifPermIndicators();
+      performMissedAlertCheck();
+      renderDashboardGrid();
+      triggerQuantumEngine();
+      
+      // Auto prompt web alert clearance if permission is default (not yet prompted)
+      if ("Notification" in window && Notification.permission === 'default') {
+        setTimeout(() => {
+          requestNotificationAccess();
+        }, 1500);
+      }
+    });
+
+    function initClock() {
+      // Stub matching load initialization signature
+    }
+  </script>
+
+</body>
+</html>
