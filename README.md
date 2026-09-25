@@ -1,20 +1,16 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Nova Task Engine
 
-# Run and deploy your AI Studio app
+A modern, sleek task management command center built with React, Vite, and Tailwind CSS.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/22a29a69-a7b7-4b19-8b72-862ffc78c0df
+- Real-time task scheduling and execution tracking.
+- Audio and browser notifications for urgent tasks.
+- Dark and Light mode interface customization.
+- Clean dashboard metrics and analytics.
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
+## Quick Start
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
